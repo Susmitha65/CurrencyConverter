@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #fff;
+            overflow: hidden; /* Prevents scrollbar appearance due to animation */
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: swing 5s infinite alternate ease-in-out;
+        }
+        label, input, select, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        input, select, button {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #0072ff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        @keyframes swing {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Currency Converter</h1>
+        <form id="converterForm">
+            <label for="amount">Enter amount:</label>
+            <input type="text" id="amount" name="amount" required>
+            <label for="from">From:</label>
+            <select id="from" name="from">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="CAD">CAD</option>
+                <option value="AUD">AUD</option>
+                <option value="INR">INR</option>
+            </select>
+            <label for="to">To:</label>
+            <select id="to" name="to">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="CAD">CAD</option>
+                <option value="AUD">AUD</option>
+                <option value="INR">INR</option>
+            </select>
+            <button type="button" onclick="convertCurrency()">Convert</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function convertCurrency() {
+            const amount = document.getElementById('amount').value;
+            const from = document.getElementById('from').value;
+            const to = document.getElementById('to').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:8080/convert', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    const result = document.getElementById('result');
+                    if (xhr.status === 200) {
+                        result.innerHTML = xhr.responseText;
+                    } else {
+                        result.innerHTML = 'Error: ' + xhr.statusText;
+                    }
+                }
+            };
+
+            const data = JSON.stringify({ amount: amount, from: from, to: to });
+            xhr.send(data);
+        }
+    </script>
+</body>
+</html>
